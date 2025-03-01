@@ -13,7 +13,7 @@ import de.tum.cit.aet.thesis.entity.User;
 import de.tum.cit.aet.thesis.entity.key.NotificationSettingId;
 import de.tum.cit.aet.thesis.mock.EntityMockFactory;
 import de.tum.cit.aet.thesis.repository.NotificationSettingRepository;
-import de.tum.cit.aet.thesis.repository.UserGroupRepository;
+import de.tum.cit.aet.thesis.repository.UserOrganisationRoleRepository;
 import de.tum.cit.aet.thesis.repository.UserRepository;
 
 import java.time.Instant;
@@ -29,7 +29,7 @@ class AuthenticationServiceTest {
     private UserRepository userRepository;
 
     @Mock
-    private UserGroupRepository userGroupRepository;
+    private UserOrganisationRoleRepository userOrganisationRoleRepository;
 
     @Mock
     private UploadService uploadService;
@@ -48,7 +48,7 @@ class AuthenticationServiceTest {
     void setUp() {
         authenticationService = new AuthenticationService(
                 userRepository,
-                userGroupRepository,
+                userOrganisationRoleRepository,
                 uploadService,
                 notificationSettingRepository
         );

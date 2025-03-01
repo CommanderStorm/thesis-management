@@ -8,12 +8,12 @@ import org.springframework.web.multipart.MultipartFile;
 import de.tum.cit.aet.thesis.constants.UploadFileType;
 import de.tum.cit.aet.thesis.entity.NotificationSetting;
 import de.tum.cit.aet.thesis.entity.User;
-import de.tum.cit.aet.thesis.entity.UserGroup;
+import de.tum.cit.aet.thesis.entity.UserOrganisationRole;
 import de.tum.cit.aet.thesis.entity.key.NotificationSettingId;
-import de.tum.cit.aet.thesis.entity.key.UserGroupId;
+import de.tum.cit.aet.thesis.entity.key.UserOrganisationRoleId;
 import de.tum.cit.aet.thesis.exception.request.ResourceNotFoundException;
 import de.tum.cit.aet.thesis.repository.NotificationSettingRepository;
-import de.tum.cit.aet.thesis.repository.UserGroupRepository;
+import de.tum.cit.aet.thesis.repository.UserOrganisationRoleRepository;
 import de.tum.cit.aet.thesis.repository.UserRepository;
 
 import java.time.Instant;
@@ -22,14 +22,14 @@ import java.util.*;
 @Service
 public class AuthenticationService {
     private final UserRepository userRepository;
-    private final UserGroupRepository userGroupRepository;
+    private final UserOrganisationRoleRepository userMembershipRepository;
     private final UploadService uploadService;
     private final NotificationSettingRepository notificationSettingRepository;
 
     @Autowired
-    public AuthenticationService(UserRepository userRepository, UserGroupRepository userGroupRepository, UploadService uploadService, NotificationSettingRepository notificationSettingRepository) {
+    public AuthenticationService(UserRepository userRepository, UserOrganisationRoleRepository userMembershipRepository, UploadService uploadService, NotificationSettingRepository notificationSettingRepository) {
         this.userRepository = userRepository;
-        this.userGroupRepository = userGroupRepository;
+        this.userMembershipRepository = userMembershipRepository;
         this.uploadService = uploadService;
         this.notificationSettingRepository = notificationSettingRepository;
     }
@@ -48,7 +48,7 @@ public class AuthenticationService {
         String firstName = (String) attributes.get("given_name");
         String lastName = (String) attributes.get("family_name");
 
-        List<String> groups = jwt.getAuthorities().stream()
+        List<String> roles = jwt.getAuthorities().stream()
                 .filter(authority -> authority.getAuthority().startsWith("ROLE_"))
                 .map(authority -> authority.getAuthority().replace("ROLE_", "")).toList();
 
@@ -78,24 +78,26 @@ public class AuthenticationService {
 
         user = userRepository.save(user);
 
-        userGroupRepository.deleteByUserId(user.getId());
+        userMembershipRepository.deleteByUserId(user.getId());
 
-        Set<UserGroup> userGroups = new HashSet<>();
+        Set<UserOrganisationRole> userOrganisationRoles = new HashSet<>();
 
-        for (String group : groups) {
-            UserGroup entity = new UserGroup();
-            UserGroupId entityId = new UserGroupId();
+        for (String role : roles) {
+            UserOrganisationRole entity = new UserOrganisationRole();
+            UserOrganisationRoleId entityId = new UserOrganisationRoleId();
 
             entityId.setUserId(user.getId());
-            entityId.setGroup(group);
+            entityId.setRole(role);
+            entityId.setOrganisationId(organisation);
 
             entity.setUser(user);
+            entity.setOrganisation(organisation);
             entity.setId(entityId);
 
-            userGroups.add(userGroupRepository.save(entity));
+            userOrganisationRoles.add(userMembershipRepository.save(entity));
         }
 
-        user.setGroups(userGroups);
+        user.setOrganisationRoles(userOrganisationRoles);
 
         return userRepository.save(user);
     }

@@ -80,7 +80,7 @@ public abstract class BaseIntegrationTest {
     private TopicRoleRepository topicRoleRepository;
 
     @Autowired
-    private UserGroupRepository userGroupRepository;
+    private UserMembershipRepository userMembershipRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -131,7 +131,7 @@ public abstract class BaseIntegrationTest {
         thesisRepository.deleteAll();
         applicationRepository.deleteAll();
         topicRepository.deleteAll();
-        userGroupRepository.deleteAll();
+        userMembershipRepository.deleteAll();
 
         userRepository.deleteAll();
     }

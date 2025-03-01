@@ -92,7 +92,7 @@ public class User {
     private Instant joinedAt;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private Set<UserGroup> groups = new HashSet<>();
+    private Set<UserOrganisationRole> organisationRoles = new HashSet<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<NotificationSetting> notificationSettings = new ArrayList<>();
@@ -133,8 +133,8 @@ public class User {
 
     public boolean hasAnyGroup(String...groups) {
         for (String group : groups) {
-            for (UserGroup userGroup : getGroups()) {
-                if (userGroup.getId().getGroup().equals(group)) {
+            for (UserOrganisationRole userOrganisationRole : getOrganisationRoles()) {
+                if (userOrganisationRole.getId().getRole().equals(group)) {
                     return true;
                 }
             }

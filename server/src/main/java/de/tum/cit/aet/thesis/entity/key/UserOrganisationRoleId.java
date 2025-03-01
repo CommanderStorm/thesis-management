@@ -13,26 +13,31 @@ import java.util.UUID;
 @Getter
 @Setter
 @Embeddable
-public class UserGroupId implements java.io.Serializable {
+public class UserOrganisationRoleId implements java.io.Serializable {
     @NotNull
     @Column(name = "user_id", nullable = false)
     private UUID userId;
 
     @NotNull
-    @Column(name = "\"group\"", nullable = false)
-    private String group;
+    @Column(name = "role", nullable = false)
+    private String role;
+
+    @NotNull
+    @Column(name = "organisation_id", nullable = false)
+    private String organisationId;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        UserGroupId entity = (UserGroupId) o;
+        UserOrganisationRoleId entity = (UserOrganisationRoleId) o;
         return Objects.equals(this.userId, entity.userId) &&
-                Objects.equals(this.group, entity.group);
+                Objects.equals(this.role, entity.role) &&
+                Objects.equals(this.organisationId, entity.organisationId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash("user-groups", userId, group);
+        return Objects.hash("user-groups", userId, role, organisationId);
     }
 }
